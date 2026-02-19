@@ -334,7 +334,7 @@ sub _saveHeader($$$$$) {
 
 #0. Calculate Basic Setting
   my $iBlCnt = $rhInfo->{_BIG_BLOCK_SIZE} / OLE::Storage_Lite::LongIntSize();
-  my $i1stBdL = int(($rhInfo->{_BIG_BLOCK_SIZE} - 0x4C) / OLE::Storage_Lite::LongIntSize());
+  my $i1stBdL = int((OLE::Storage_Lite::HeaderSize() - 0x4C) / OLE::Storage_Lite::LongIntSize());
   my $i1stBdMax = $i1stBdL * $iBlCnt  - $i1stBdL;
   my $iBdExL = 0;
   my $iAll = $iBBcnt + $iPPScnt + $iSBDcnt;
@@ -396,6 +396,7 @@ sub _saveHeader($$$$$) {
         print {$FILE} (pack("V", $iAll+$i));
     }
     print {$FILE} ((pack("V", -1)) x($i1stBdL-$i)) if($i<$i1stBdL);
+    print {$FILE} "\x00" x ($rhInfo->{_BIG_BLOCK_SIZE} - OLE::Storage_Lite::HeaderSize()) if ($rhInfo->{_BIG_BLOCK_SIZE} > OLE::Storage_Lite::HeaderSize());
 }
 #------------------------------------------------------------------------------
 # _saveBigData (OLE::Storage_Lite::PPS)
