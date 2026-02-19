@@ -1163,23 +1163,23 @@ sub _getNthPps($$$){
     unpack("vCCVVV", substr($sWk, 0x40, 2+2+3*OLE::Storage_Lite::LongIntSize()));
   $iNmSize = ($iNmSize > 2)? $iNmSize - 2 : $iNmSize;
   my $sNm= substr($sWk, 0, $iNmSize);
-  my @raTime1st =
+  my $raTime1st =
         (($iType == OLE::Storage_Lite::PpsType_Root()) or ($iType == OLE::Storage_Lite::PpsType_Dir()))?
-            OLEDate2Local(substr($sWk, 0x64, 8)) : undef ,
-  my @raTime2nd =
+            [ OLEDate2Local(substr($sWk, 0x64, 8)) ] : undef ,
+  my $raTime2nd =
         (($iType == OLE::Storage_Lite::PpsType_Root()) or ($iType == OLE::Storage_Lite::PpsType_Dir()))?
-            OLEDate2Local(substr($sWk, 0x6C, 8)) : undef,
+            [ OLEDate2Local(substr($sWk, 0x6C, 8)) ] : undef,
   my($iStart, $iSize) = unpack("VV", substr($sWk, 0x74, 8));
   if($bData) {
       my $sData = _getData($iType, $iStart, $iSize, $rhInfo);
       return OLE::Storage_Lite::PPS->new(
         $iPos, $sNm, $iType, $lPpsPrev, $lPpsNext, $lDirPps,
-        \@raTime1st, \@raTime2nd, $iStart, $iSize, $sData, undef);
+        $raTime1st, $raTime2nd, $iStart, $iSize, $sData, undef);
   }
   else {
       return OLE::Storage_Lite::PPS->new(
         $iPos, $sNm, $iType, $lPpsPrev, $lPpsNext, $lDirPps,
-        \@raTime1st, \@raTime2nd, $iStart, $iSize, undef, undef);
+        $raTime1st, $raTime2nd, $iStart, $iSize, undef, undef);
   }
 }
 #------------------------------------------------------------------------------
